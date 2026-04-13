@@ -2,10 +2,12 @@ package com.springbootexample.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import com.springbootexample.entity.Customer;
 import com.springbootexample.entity.Transaction;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
@@ -18,4 +20,5 @@ List<Transaction> findByCustomerAndDateRange(
         LocalDateTime from,
         LocalDateTime to
 );
+Optional<Customer> findByName(String string);
 }

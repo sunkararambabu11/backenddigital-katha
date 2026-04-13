@@ -101,5 +101,13 @@ public class DashboardServiceImpl implements DashboardService {
 
 	    return map;
 	}
+	public Map<String, Object> getSummary(Long userId) {
 
+	    Map<String, Object> data = new HashMap<>();
+
+	    data.put("totalCustomers", 10);       // replace with real logic
+	    data.put("totalOutstanding", 5000);   // replace with real logic
+
+	    return data;
+	}
 }

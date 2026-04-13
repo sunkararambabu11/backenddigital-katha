@@ -26,10 +26,18 @@ public class JwtUtil {
     }
 
     // 🔥 Extract userId
+//    public Long extractUserId(String token) {
+//
+//        Claims claims = Jwts.parser()
+//                .setSigningKey(SECRET)
+//                .parseClaimsJws(token)
+//                .getBody();
+//
+//        return claims.get("userId", Long.class);
+//    }
     public Long extractUserId(String token) {
-
         Claims claims = Jwts.parser()
-                .setSigningKey(SECRET)
+                .setSigningKey("mysecret")
                 .parseClaimsJws(token)
                 .getBody();
 

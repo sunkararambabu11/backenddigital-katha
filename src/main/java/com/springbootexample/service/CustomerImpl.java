@@ -1,6 +1,7 @@
 package com.springbootexample.service;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -96,4 +97,20 @@ public class CustomerImpl implements CustomerService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	public void createFromAi(Map<String, Object> data, String userId) {
+
+	    Customer c = new Customer();
+
+	    c.setName(data.get("name").toString());
+	    c.setMobile(data.get("mobile").toString());
+	    c.setOpeningBalance(Double.parseDouble(data.get("openingBalance").toString()));
+	    c.setCurrentBalance(c.getOpeningBalance());
+	    c.setDescription(data.get("description").toString());
+
+	    // 🔥 Important: assign logged-in user
+	    c.setUserId(Long.parseLong(userId));
+
+	    repository.save(c);
+	}
+	
 }

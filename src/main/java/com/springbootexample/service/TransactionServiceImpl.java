@@ -1,6 +1,7 @@
 package com.springbootexample.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.springbootexample.entity.Customer;
 import com.springbootexample.entity.Transaction;
@@ -124,6 +125,21 @@ public class TransactionServiceImpl implements TransactionService {
 	    oldTxn.setBalanceAfter(balance);
 
 	    return txnRepo.save(oldTxn);
+	}
+	public void createFromAi(Map<String, Object> data, String userId) {
+
+	    Customer customer = txnRepo
+	        .findByName(data.get("name").toString())
+	        .orElseThrow(() -> new RuntimeException("Customer not found"));
+
+	    Transaction t = new Transaction();
+
+	    t.setCustomerId(customer.getId());
+	    t.setAmount(Double.parseDouble(data.get("amount").toString()));
+	    t.setType(data.get("type").toString());
+	    t.setDescription(data.get("description").toString());
+
+	    txnRepo.save(t);
 	}
 	}
 

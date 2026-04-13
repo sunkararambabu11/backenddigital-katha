@@ -12,7 +12,7 @@ public interface DashboardService {
 
     List<TopDebtorDTO> getTopDebtors(Long userId);
    
-
+    Map<String, Object> getSummary(Long userId);
     List<RecentTransactionDTO> getRecentTransactions(Long userId);
 
     Map<String, Double> getMonthlyReport(Long userId);

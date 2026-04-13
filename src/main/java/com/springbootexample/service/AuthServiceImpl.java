@@ -41,26 +41,34 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public LoginResponse login(LoginRequest request) {
-		User user = userRepository
-	            .findByMobileOrEmail(request.getUsername(), request.getUsername())
-	            .orElseThrow(() -> new RuntimeException("User not found"));
-		
-		
-		 if(!user.getPassword().equals(request.getPassword())) {
-			  throw new RuntimeException("Passwords do not match");
-		 }
-		 
-		 
-		 String token = jwtUtil.generateToken(user.getId());
-		 
-		LoginResponse responce = new LoginResponse();
-		responce.setUserId(user.getId());
-		responce.setShopName(user.getShopName());
-		responce.setToken(jwtUtil.generateToken(user.getId()));
-		responce.setMessage("login sucessfully");
-		return responce;
-	}
-	
-	
 
-}
+	    String input = request.getUsername().trim();
+
+	    User user;
+
+	    // 🔥 Check if input is mobile (only digits)
+	    if (input.matches("\\d+")) {
+	        user = userRepository.findByMobile(input)
+	                .orElseThrow(() -> new RuntimeException("User not found"));
+	    } 
+	    // 🔥 Otherwise treat as email
+	    else {
+	        user = userRepository.findByEmail(input)
+	                .orElseThrow(() -> new RuntimeException("User not found"));
+	    }
+
+	    // Password check
+	    if (!user.getPassword().equals(request.getPassword())) {
+	        throw new RuntimeException("Invalid password");
+	    }
+
+	    String token = jwtUtil.generateToken(user.getId());
+
+	    LoginResponse response = new LoginResponse();
+	    response.setUserId(user.getId());
+	    response.setShopName(user.getShopName());
+	    response.setToken(token);
+	    response.setMessage("Login successfully");
+
+	    return response;
+	}
