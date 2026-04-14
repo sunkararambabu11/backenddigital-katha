@@ -11,8 +11,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.springbootexample.security.JwtUtil;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 
@@ -50,11 +48,10 @@ public class JwtFilter extends OncePerRequestFilter {
                 }
 
             } catch (Exception e) {
-                System.out.println("Invalid JWT Token ❌");
+                System.out.println("Invalid JWT Token: " + e.getMessage());
             }
         }
 
         filterChain.doFilter(request, response);
     }
-  
 }

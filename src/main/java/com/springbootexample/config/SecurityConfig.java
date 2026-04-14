@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import com.springbootexample.security.JwtFilter;
 
 @Configuration
 public class SecurityConfig {
@@ -19,15 +19,24 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
-            .cors(cors -> {}) // 🔥 enable CORS
+            .cors(cors -> {}) // enable CORS
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // 🔥 VERY IMPORTANT
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/h2-console/**").permitAll()
                 .anyRequest().authenticated()
             )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // 🔥 JWT
+            .headers(headers -> headers.frameOptions(frame -> frame.disable())) // for H2 console
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+    @SuppressWarnings("deprecation")
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        // Using NoOp because AuthServiceImpl stores plain-text passwords
+        return NoOpPasswordEncoder.getInstance();
     }
 }

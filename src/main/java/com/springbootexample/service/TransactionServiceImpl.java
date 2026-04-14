@@ -128,7 +128,7 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 	public void createFromAi(Map<String, Object> data, String userId) {
 
-	    Customer customer = txnRepo
+	    Customer customer = customerRepo
 	        .findByName(data.get("name").toString())
 	        .orElseThrow(() -> new RuntimeException("Customer not found"));
 
