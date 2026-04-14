@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springbootexample.dto.DashboardDTO;
+import com.springbootexample.dto.DashboardSummaryDTO;
 import com.springbootexample.dto.RecentTransactionDTO;
 import com.springbootexample.dto.TopDebtorDTO;
 import com.springbootexample.security.JwtUtil;
@@ -31,25 +32,31 @@ public class DashboardController {
         return jwtUtil.extractUserId(token);
     }
 
-    // 🔥 Main summary
+    // Combined summary — single API call for the entire dashboard
+    @GetMapping("/summary")
+    public DashboardSummaryDTO summary(HttpServletRequest request) {
+        return service.getFullSummary(getUserId(request));
+    }
+
+    // Original basic stats (kept for backward compatibility)
     @GetMapping
     public DashboardDTO dashboard(HttpServletRequest request) {
         return service.getDashboard(getUserId(request));
     }
 
-    // 🔥 Top debtors
+    // Top debtors
     @GetMapping("/top-debtors")
     public List<TopDebtorDTO> topDebtors(HttpServletRequest request) {
         return service.getTopDebtors(getUserId(request));
     }
 
-    // 🔥 Recent transactions
+    // Recent transactions
     @GetMapping("/recent")
     public List<RecentTransactionDTO> recent(HttpServletRequest request) {
         return service.getRecentTransactions(getUserId(request));
     }
 
-    // 🔥 Monthly chart
+    // Monthly chart
     @GetMapping("/monthly")
     public Map<String, Double> monthly(HttpServletRequest request) {
         return service.getMonthlyReport(getUserId(request));
