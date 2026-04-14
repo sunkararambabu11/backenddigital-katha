@@ -2,44 +2,38 @@ package com.springbootexample.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private String SECRET = "mysecret";
+    // Must be at least 32 bytes for HS256
+    private static final String SECRET_STRING = "digital-katha-jwt-secret-key-2024-minimum-32-bytes";
+    private static final SecretKey SECRET_KEY = Keys.hmacShaKeyFor(SECRET_STRING.getBytes(StandardCharsets.UTF_8));
 
-    // 🔥 Generate Token
+    // Generate Token (1 hour expiry)
     public String generateToken(Long userId) {
-
         return Jwts.builder()
-                .setSubject("user")
+                .subject("user")
                 .claim("userId", userId)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
-                .signWith(SignatureAlgorithm.HS256, SECRET)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hour
+                .signWith(SECRET_KEY)
                 .compact();
     }
 
-    // 🔥 Extract userId
-//    public Long extractUserId(String token) {
-//
-//        Claims claims = Jwts.parser()
-//                .setSigningKey(SECRET)
-//                .parseClaimsJws(token)
-//                .getBody();
-//
-//        return claims.get("userId", Long.class);
-//    }
+    // Extract userId from token
     public Long extractUserId(String token) {
         Claims claims = Jwts.parser()
-                .setSigningKey("mysecret")
-                .parseClaimsJws(token)
-                .getBody();
+                .verifyWith(SECRET_KEY)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
 
         return claims.get("userId", Long.class);
     }

@@ -8,12 +8,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.springbootexample.entity.Student;
-import com.springbootexample.entity.User;
 
-public interface StudentRepository extends JpaRepository<Student,Long> {
-	 Optional<User> findByEmail(String email);
-	 List<Student> findByCourseIgnoreCase(String course);
-	
-	 Page<Student> findByCourseIgnoreCase(String course, Pageable pageable);
-	 
-	}
+public interface StudentRepository extends JpaRepository<Student, Long> {
+    Optional<Student> findByEmail(String email);
+    List<Student> findByCourseIgnoreCase(String course);
+    Page<Student> findByCourseIgnoreCase(String course, Pageable pageable);
+}
