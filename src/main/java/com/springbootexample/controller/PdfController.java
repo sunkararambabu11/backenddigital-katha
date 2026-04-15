@@ -1,4 +1,3 @@
-
 package com.springbootexample.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,12 +24,15 @@ public class PdfController {
     private JwtUtil jwtUtil;
 
     private Long getUserId(HttpServletRequest request) {
-        //String token = request.getHeader("Authorization").replace("Bearer ", "");
-        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing or invalid Authorization header");
+        }
+        String token = header.replace("Bearer ", "");
         return jwtUtil.extractUserId(token);
     }
 
-    // 🔥 ALL CUSTOMERS PDF
+    // ALL CUSTOMERS PDF
     @GetMapping("/customers")
     public ResponseEntity<byte[]> downloadCustomers(HttpServletRequest request) {
 
@@ -44,7 +46,7 @@ public class PdfController {
                 .body(pdf);
     }
 
-    // 🔥 CUSTOMER TRANSACTIONS PDF
+    // CUSTOMER TRANSACTIONS PDF
     @PostMapping("/transactions")
     public ResponseEntity<byte[]> downloadTransactions(
             @RequestBody TransactionPdfRequest request,
@@ -71,6 +73,4 @@ public class PdfController {
                 .contentType(MediaType.APPLICATION_PDF)
                 .body(pdf);
     }
-    
-    //eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyIiwidXNlcklkIjozLCJpYXQiOjE3NzQ3NjgzMjksImV4cCI6MTc3NDc3MTkyOX0.BARLmINsAjhlKgqPLRiR5XbjhTpTQRwnpUWmvqrd0Q8
 }

@@ -28,7 +28,11 @@ public class DashboardController {
     private JwtUtil jwtUtil;
 
     private Long getUserId(HttpServletRequest request) {
-        String token = request.getHeader("Authorization").replace("Bearer ", "");
+        String header = request.getHeader("Authorization");
+        if (header == null || !header.startsWith("Bearer ")) {
+            throw new RuntimeException("Missing or invalid Authorization header");
+        }
+        String token = header.replace("Bearer ", "");
         return jwtUtil.extractUserId(token);
     }
 
