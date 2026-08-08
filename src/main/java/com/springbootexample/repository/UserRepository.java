@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.springbootexample.dto.ProfileResponse;
 import com.springbootexample.entity.User;
 
 public interface UserRepository extends JpaRepository<User,Long> {
@@ -14,6 +15,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     //Optional<User> findByMobileOrEmail(String mobile, String email);
 
     Optional<User> findByMobile(String mobile);
+   
     
 
 
