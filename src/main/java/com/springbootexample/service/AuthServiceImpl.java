@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.springbootexample.dto.LoginRequest;
 import com.springbootexample.dto.LoginResponse;
+import com.springbootexample.dto.ProfileResponse;
 import com.springbootexample.dto.RegisterRequest;
 import com.springbootexample.entity.User;
 import com.springbootexample.repository.UserRepository;
@@ -72,4 +73,21 @@ public class AuthServiceImpl implements AuthService {
 
 	    return response;
 	}
+
+	@Override
+    public ProfileResponse getProfile(Long userId) {
+
+    User user = userRepository.findById(userId)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    ProfileResponse response = new ProfileResponse();
+
+    response.setId(user.getId());
+    response.setOwnerName(user.getOwnerName());
+    response.setShopName(user.getShopName());
+    response.setEmail(user.getEmail());
+    response.setMobile(user.getMobile());
+
+    return response;
+}
 }

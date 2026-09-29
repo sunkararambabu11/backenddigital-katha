@@ -60,7 +60,7 @@ public class TransactionController {
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id,
                          HttpServletRequest request) {
-
+ System.out.println("Delete Request ID = " + id);
         Long userId = getUserId(request);
 
         service.deleteTransaction(id, userId);

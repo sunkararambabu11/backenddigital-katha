@@ -11,7 +11,7 @@ import java.util.*;
 @Service
 public class AiService {
 
-    @Value("${openai.api.key}")
+    @Value("${openai.api.key:YOUR_API_KEY_HERE}")
     private String apiKey;
 
     @Autowired
