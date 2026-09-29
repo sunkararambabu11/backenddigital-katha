@@ -141,18 +141,35 @@ public class TransactionServiceImpl implements TransactionService {
 	}
 
 	public void createFromAi(Map<String, Object> data, String userId) {
+		String customerName = data.get("name") != null ? data.get("name").toString().trim() : "";
+		Long uId = Long.parseLong(userId);
 
 		Customer customer = customerRepo
-				.findByName(data.get("name").toString())
-				.orElseThrow(() -> new RuntimeException("Customer not found"));
+				.findByNameAndUserId(customerName, uId)
+				.orElseGet(() -> customerRepo.findByName(customerName)
+						.orElseThrow(() -> new RuntimeException("Customer '" + customerName + "' not found")));
+
+		double amount = 0.0;
+		Object amtObj = data.get("amount");
+		if (amtObj != null) {
+			try {
+				amount = Double.parseDouble(amtObj.toString());
+			} catch (NumberFormatException ignored) {}
+		}
+
+		String rawType = data.get("type") != null ? data.get("type").toString().trim() : "DEBIT";
+		String normalizedType = "DEBIT";
+		if ("CREDIT".equalsIgnoreCase(rawType) || "GOT".equalsIgnoreCase(rawType) 
+				|| "RECEIVED".equalsIgnoreCase(rawType) || "JAMA".equalsIgnoreCase(rawType)) {
+			normalizedType = "CREDIT";
+		}
 
 		Transaction t = new Transaction();
-
 		t.setCustomerId(customer.getId());
-		t.setAmount(Double.parseDouble(data.get("amount").toString()));
-		t.setType(data.get("type").toString());
-		t.setDescription(data.get("description").toString());
+		t.setAmount(amount);
+		t.setType(normalizedType);
+		t.setDescription(data.get("description") != null ? data.get("description").toString().trim() : "Recorded via AI");
 
-		txnRepo.save(t);
+		addTransaction(t, uId);
 	}
 }

@@ -21,7 +21,7 @@ public interface CustomerService {
 
 	List<Customer> getAllcustomersData1(Long userId);
 	
-	void createFromAi(Map<String, Object> data, String userId);
+	Customer createFromAi(Map<String, Object> data, String userId);
 
 	void deletecustomer(Long id, Long userId);
 

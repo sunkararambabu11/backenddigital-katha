@@ -97,20 +97,35 @@ public class CustomerImpl implements CustomerService {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public void createFromAi(Map<String, Object> data, String userId) {
+	@Override
+	public Customer createFromAi(Map<String, Object> data, String userId) {
+        String mobile = data.get("mobile") != null ? data.get("mobile").toString().trim() : "";
+        if (!mobile.isEmpty()) {
+            repository.findByMobile(mobile).ifPresent(existing -> {
+                throw new RuntimeException("Mobile number '" + mobile + "' is already registered to customer '" + existing.getName() + "'");
+            });
+        }
 
 	    Customer c = new Customer();
 
-	    c.setName(data.get("name").toString());
-	    c.setMobile(data.get("mobile").toString());
-	    c.setOpeningBalance(Double.parseDouble(data.get("openingBalance").toString()));
-	    c.setCurrentBalance(c.getOpeningBalance());
-	    c.setDescription(data.get("description").toString());
+	    c.setName(data.get("name") != null ? data.get("name").toString().trim() : "Unknown");
+	    c.setMobile(mobile);
+	    
+	    double openingBalance = 0.0;
+	    Object ob = data.get("openingBalance");
+	    if (ob != null) {
+	        try {
+	            openingBalance = Double.parseDouble(ob.toString());
+	        } catch (NumberFormatException ignored) {}
+	    }
+	    c.setOpeningBalance(openingBalance);
+	    c.setCurrentBalance(openingBalance);
+	    c.setDescription(data.get("description") != null ? data.get("description").toString().trim() : "");
 
 	    // 🔥 Important: assign logged-in user
 	    c.setUserId(Long.parseLong(userId));
 
-	    repository.save(c);
+	    return repository.save(c);
 	}
 	
 }
